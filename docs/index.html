@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Data visualisation of grants to user-led organizations">
+  <meta name="keywords" content="user-led,grants,360giving,GrantNav,D3,dataviz">
+  <meta name="author" content="Victòria Oliveres">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From founder to user: visualising grants to user-led organizations</title>
+
+  <link rel="stylesheet" href="style.css"></link>
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Raleway" />
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+  <link rel="icon" type="image/png" href="https://vicoliveres.github.io/user-led-grants/user-led-grants-icon.png"/>
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" value="summary">
+  <meta name="twitter:site" content="@VictriaVic">
+  <meta name="twitter:title" content="From founder to user: visualising grants to user-led organizations">
+  <meta name="twitter:description" content="Data visualisation of grants to user-led organizations, as a submission to the 360Giving challenge.">
+  <meta name="twitter:creator" content="@VictriaVic">
+  <!-- Twitter Summary card images must be at least 120x120px -->
+  <meta name="twitter:image" content="https://vicoliveres.github.io/user-led-grants/user-led-grants-chart.png">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="From founder to user: visualising grants to user-led organizations" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://vicoliveres.github.io/user-led-grants" />
+  <meta property="og:image" content="https://vicoliveres.github.io/user-led-grants/user-led-grants-chart.png" />
+  <meta property="og:description" content="Data visualisation of grants to user-led organizations, as a submission to the 360Giving challenge." />
+</head>
+
+<body>
+
+  <div class="header">
+    <p class="header-text">Analysis and visualisation of grants data from </p>
+    <a href="http://grantnav.threesixtygiving.org/" target="_blank"><img src="360giving-logo.png" alt="360Giving logo"></a>
+  </div>
+
+  <h1>From founder to user:</h1>
+  <h2>visualising grants to user-led organizations</h2>
+
+  <div class="container-text">
+    <p><b>User-led organisations (ULOs)</b> are those that are run by and controlled by people who use support services.
+      This means that people making decisions about the organization are the same that could use what the organization provides.
+      For example, they can offer peer support – people helping each other based on their own personal experience.
+      As explained by <a href="https://www.scie.org.uk/personalisation/practice/user-led-organisations-ulo" target="_blank">the Social Care Institute for Excellence (SCIE) and the National Centre for Independent Living (NCIL) </a>, “they were set up to promote giving people more choice and control over how their support needs are met”.
+    </p><p>
+      For this analysis, we’ve taken into account communities and residents, patients, young people, older people, volunteers, children, parents and families, women, disabled people, students, BAME people, asylum seekers, violence survivors and ex-offenders.
+      These are different groups considered likely to set up user-led organizations with activities, services and programmes planned by and used by themselves.
+    </p><p>
+      The analysis of the <a href="http://grantnav.threesixtygiving.org/" target="_blank">UK grant data from the 360 Giving GrantNav dataset</a> detected <b>1062 grants</b> given to all this variety of user-led organizations or for user-led programmes in the last two decades*.
+    </p><p>
+      Through the graphics displayed below you’ll be able to discover who funds user-led organizations, in what thematic area, how much funding they receive and what type of organisation they are.
+      Hover over the squares to find more about each specific grant.
+    </p>
+    </br>
+    <h3>1062 grants for user-led programmes</h3>
+  </div>
+  <div class="container-small">
+    <div class="chart" id="chart-simple"></div>
+  </div>
+  <div style="height:80px;"></div>
+
+  <div class="container-text">
+    <p><b>Children and young people</b> has been the most funded theme, receiving nearly a third of the grants (334 grants).
+      Projects <b>led by the community</b> are the second most funded, with 249 grants.
+    </p><p>
+      To design this data visualisation each grant has been labelled with a single category, although some of them involve more than one theme.
+      This information can be found in the grant description.
+    </p>
+    </br>
+    <h3>Top 10 grant themes</h3>
+  </div>
+  <div class="container-small">
+    <div class="chart" id="chart-colours"></div>
+  </div>
+  <div class="container-text">
+    <div class="legend"></div>
+  </div>
+  <div style="height:80px;"></div>
+
+  <div class="container-text">
+    <p>User-led organizations have received <b>£382,595,449</b>.
+      Half of the funding (more than 200 million pounds) went to the largest grant to a user-led programme, awarded to Big Local Trust in 2011.
+    </p><p>
+      On average, user-led organizations were awarded a <b>median of £10,000 per grant</b>.
+      In the following chart each figure’s width is adjusted to the amount of the grant.
+      The largest grant has been hidden to allow an easier insight.
+    </p>
+    </br>
+    <h3>Funding per grant</h3>
+  </div>
+  <div class="container-big">
+    <div class="chart" id="chart-size"></div>
+  </div>
+  <div class="container-text">
+    <div class="legend"></div>
+  </div>
+  <div style="height:80px;"></div>
+
+  <div class="container-text">
+    <p>There is a variety of organization types under which user-led organizations can be found.
+      Two thirds of user-led grants went to charities, but private companies, CICs and education institutions -among others- also received funding.
+    </p>
+    </br>
+    <h3>Recipient organizations of user-led grants</h3>
+  </div>
+  <div class="container-big">
+    <div class="column-chart" id="chart-orgtype"></div>
+  </div>
+  <div class="container-text">
+    <div class="legend"></div>
+  </div>
+  <div style="height:80px;"></div>
+
+  <div class="container-text">
+    <p>A total of <b>41 different founders</b> gave money for user-led programmes.
+      The Big Lottery Fund leads the ranking as it has funded 739 different grants.
+    </p>
+    </br>
+    <h3>Grants per founder</h3>
+  </div>
+  <div class="container-big">
+    <div class="row-chart" id="chart-fundingorg"></div>
+  </div>
+  <div class="container-text">
+    <div class="legend"></div>
+  </div>
+  <div style="height:80px;"></div>
+
+  <div class="container-text">
+    <p>If we sort the founders list by the amount they awarded, the Big Lottery Trust is still at the top, having given more than £350 million in total
+      (although this amount is reduced to £136 million when we hide the Big Local Trust grant mentioned earlier).
+      In the rest of the ranking there are some changes.
+      For example, London Councils jump to the third place having funded only two programmes.
+    </p><p>Grants have been scaled to be appreciated for human sight, therefore some small grants are shown bigger than they should.
+      This is why, when aggregating the grants, it looks like some founders gave more money than the ones that precede them.
+    </p>
+    </br>
+    <h3>Founders sorted by amount given</h3>
+  </div>
+  <div class="container-big">
+    <div class="row-chart" id="chart-fundingorgsize"></div>
+  </div>
+  <div class="container-text">
+    <div class="legend"></div>
+  </div>
+  <div style="height:60px;"></div>
+
+  <div class="container-text">
+    <p style="color: #2f4f4f;"><em>*GrantNav provides data for grants dated from 1998 to 2018, although the bulk of them are dated from 2004 onwards.</em>
+    </p><p style="color: #2f4f4f;">
+      This page is a submission to the <a style="color: #2f4f4f;" href="https://challenge.threesixtygiving.org/" target='_blank'>360Giving Data Visualisation Challenge</a>.
+    </p>
+  </div>
+  <div style="height:80px;"></div>
+
+  <footer class="footer">
+    <hr/>
+    <p><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target='_blank'><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/80x15.png" /></a>
+      <a href="https://vicoliveres.github.io/victoria-oliveres-torrescassana-data-journalism/" target='_blank'>Victòria Oliveres</a>. <a href="https://github.com/vicoliveres/user-led-grants" target='_blank'>Get the data and code</a>.
+    <br />Website created using <a href="https://d3js.org/" target='_blank'>D3.js</a> and <a href="https://www.w3schools.com/css/css3_flexbox.asp" target='_blank'>CSS Flexbox</a>.
+    </p>
+  </footer>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="script.js"></script>
