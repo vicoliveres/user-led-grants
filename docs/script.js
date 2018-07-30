@@ -197,7 +197,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
   var chartorgtype = function(d3) {
     //Load in grants data
     d3.json("userledfinal.json", function(data) {
-
+       
+      data.sort(function(a, b) {return d3.descending(a.ThemeFreq, b.ThemeFreq);});
       data.sort(function(a, b) {return d3.descending(a.OrgTypeFreq, b.OrgTypeFreq);});
 
       const nest = d3
@@ -283,7 +284,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
   var chartfundingorg = function(d3) {
     //Load in grants data
     d3.json("userledfinal.json", function(data) {
-
+      
+      data.sort(function(a, b) {return d3.descending(a.ThemeFreq, b.ThemeFreq);});
       data.sort(function(a, b) {return d3.descending(a.OrgFreq, b.OrgFreq);});
 
       const nest = d3
@@ -364,7 +366,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
   var chartfundingorgtype = function(d3) {
     //Load in grants data
     d3.json("userledfinal.json", function(data) {
-
+        
+      data.sort(function(a, b) {return d3.descending(a.AmountAwarded, b.AmountAwarded);});
       var datasmall = data.filter(function(d) { return d.AmountAwarded < 214340846; })
       datasmall.sort(function(a, b) {return d3.descending(a.TotalAmountFounder, b.TotalAmountFounder);});
 
