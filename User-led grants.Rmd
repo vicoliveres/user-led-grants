@@ -1,0 +1,290 @@
+---
+title: "User-led grants"
+output: html_notebook
+---
+
+# Import data
+
+Import the data corresponding to a search of 'user-led' in the Grant Nav website  (http://grantnav.threesixtygiving.org).
+
+```{r}
+userledgrantsfull <- read.csv("grantnav-userled-8469.csv", na.strings=c(""," ","NA","-","n/a"))
+```
+
+# Data cleaning
+
+Clean column names
+
+```{r}
+colnames(userledgrantsfull)[1] <- "Identifier"
+```
+
+Select only the columns useful for this visualisation
+
+```{r}
+library(dplyr)
+userledgrants <- select(userledgrantsfull, c("Identifier","Title","Description","Amount.Awarded","Award.Date","URL","Recipient.Org.Identifier","Recipient.Org.Name","Recipient.Org.Name","Recipient.Org.Charity.Number","Recipient.Org.Company.Number","Recipient.Org.Location.0.Geographic.Code.Type","Funding.Org.Identifier","Funding.Org.Name","Grant.Programme.Code","Grant.Programme.Title"))
+```
+
+Filter the rows related to user-led grants and user-led organizations. 
+
+It's important that we add all the details because filtering only by the word "led" we would count in grants containing unrelated topics, such as "led lighting" or "led by X professor". 
+
+On the other side, if we only filter by "user-led" we miss a lot of grants that fit in the description.
+
+```{r}
+userledgrantsdescr <- filter(userledgrants, grepl("user(  *|- *)led|community(- *| *)led|patient(- *|  *)led|youth(- *|  *)led|people(- *|  *)led|volunteer(- *|  *)led|locally(- *|  *)led|child(- *|  *)led|parent(- *|  *)led|peer(- *|  *)led|girl(- *|  *)led|wom(a|e)n(- *|  *)led|disabled(- *|  *)led|deaf(- *|  *)led|citizen(- *|  *)led|B(A|)ME(R|)(- *|  *)led|student(- *|  *)led|ethnic(- *|  *)led|resident(- *|  *)led|pupil(- *|  *)led|young people(- *|  *)led|member(- *|  *)led|offender(- *|  *)led|family(- *|  *)led|¡young person(- *|  *)led|survivor(- *|  *)led|seeker(- *|  *)led|led by (the |)community|led by (the |)patient|led by (the |)user|led by (the |)youth|led by (the |)people|led by (the |)volunteer|led by (the |)children|led by (the |)parent|led by (the |)peer|led by (the |)girl|led by (the |)women|led by (the |)deaf|led by (the |)disabled|led by (the |)BAME|led by (the |)student|led by (the |)resident|led by (the |)pupil|led by (the |)member|led by (the |)local|led by (the |a |)young|led by (the |)old|led by (the |)elder", userledgrants$Description, ignore.case = TRUE, perl = TRUE))
+
+userledgrantstitle <- filter(userledgrants, grepl("user(  *|- *)led|community(- *| *)led|patient(- *|  *)led|youth(- *|  *)led|people(- *|  *)led|volunteer(- *|  *)led|locally(- *|  *)led|child(- *|  *)led|parent(- *|  *)led|peer(- *|  *)led|girl(- *|  *)led|wom(a|e)n(- *|  *)led|disabled(- *|  *)led|deaf(- *|  *)led|citizen(- *|  *)led|B(A|)ME(R|)(- *|  *)led|student(- *|  *)led|ethnic(- *|  *)led|resident(- *|  *)led|pupil(- *|  *)led|young people(- *|  *)led|member(- *|  *)led|offender(- *|  *)led|family(- *|  *)led|¡young person(- *|  *)led|survivor(- *|  *)led|seeker(- *|  *)led|led by (the |)community|led by (the |)patient|led by (the |)user|led by (the |)youth|led by (the |)people|led by (the |)volunteer|led by (the |)children|led by (the |)parent|led by (the |)peer|led by (the |)girl|led by (the |)women|led by (the |)deaf|led by (the |)disabled|led by (the |)BAME|led by (the |)student|led by (the |)resident|led by (the |)pupil|led by (the |)member|led by (the |)local|led by (the |a |)young|led by (the |)old|led by (the |)elder", userledgrants$Title, ignore.case = TRUE, perl = TRUE))
+```
+
+Merge rows that contain user-led related information in the description and those that contain it in the title.
+
+```{r}
+library(dplyr)
+onlyuserledgrants <- union(userledgrantsdescr, userledgrantstitle)
+```
+
+Extract year when the grant was awarded
+
+```{r}
+onlyuserledgrants$Year <- substr(onlyuserledgrants$Award.Date, 1, 4)
+onlyuserledgrants$Year <- as.numeric(onlyuserledgrants$Year)
+```
+
+
+# Categorising 
+
+## By theme
+
+Go through the grant description to add a category label to each grant. 
+
+```{r}
+childyoung <- ifelse(grepl("children|pupil|student|child|young|youth", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+old <- ifelse(grepl(" old|elder", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+community <- ifelse(grepl("community", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+house <- ifelse(grepl("housing|homeless", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+mentalhealth <- ifelse(grepl("mental health|phsycolog", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+health <- ifelse(grepl("cardiac|cancer|stroke", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+race <- ifelse(grepl(" race| B(A|)ME| racial| ethnic| minority", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+women <- ifelse(grepl(" woman| girl| women|domestic abuse", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+disabled <- ifelse(grepl("disability| deaf| disabled| disabilities", onlyuserledgrants$Description, ignore.case = TRUE), 1, 0)
+themes <- data.frame(disabled,health,mentalhealth,race,house,women,old,childyoung,community,onlyuserledgrants$Description,onlyuserledgrants$Title)
+themes <- mutate(themes, sum = childyoung + old + community + house + mentalhealth + health + race + women + disabled)
+themes$theme <- colnames(themes[1:9])[apply(themes[1:9],1,which.max)]
+themes$theme <- ifelse(themes$sum==0, "Not classified", themes$theme)
+```
+
+```{r}
+filter(themes, sum==0)$theme
+```
+
+```{r}
+sum(childyoung)
+sum(old)
+sum(community)
+sum(house)
+sum(mentalhealth)
+sum(health)
+sum(race)
+sum(women)
+sum(disabled)
+```
+
+```{r}
+sort(table(themes$theme), decreasing=TRUE)
+```
+
+```{r}
+onlyuserledgrants$Theme <- themes$theme
+```
+
+Add frequency of each theme. 
+
+```{r}
+frequencythemes <- plyr::count(themes, 'theme')
+themesfreq <- dplyr::full_join(themes, frequencythemes, by.x = theme)
+onlyuserledgrants$ThemeFreq <- themesfreq$freq
+```
+
+Substitute names for the ones to display
+
+```{r}
+onlyuserledgrants$Theme <- gsub("childyoung", "Children and youngs", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("old", "The elderly", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("community", "Community", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("house", "Housing", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("mentalhealth", "Mental health", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("health", "Health", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("race", "Black, Asian and minority ethnic", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("women", "Women", onlyuserledgrants$Theme)
+onlyuserledgrants$Theme <- gsub("disabled", "People with disabilities", onlyuserledgrants$Theme)
+```
+
+
+## By organisation type
+
+Matching each recipient organization to a type
+
+```{r}
+#If it has a charity number, it is a charity
+charity <- ifelse(is.na(onlyuserledgrants$Recipient.Org.Charity.Number), 0, 1)
+
+#For the rest, we look at the name of the organization
+cic <- ifelse(grepl("CIC|C.I.C|Community Interest Company", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+university <- ifelse(grepl("university|college", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+la <- ifelse(grepl("county|council|borough", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+commgroupasso <- ifelse(grepl("Community Group|Association", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+school <- ifelse(grepl("School", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+trust <- ifelse(grepl("Trust", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, 0)
+privatecompany <- ifelse(grepl("Ltd|Limited", onlyuserledgrants$Recipient.Org.Name, ignore.case = TRUE), 1, ifelse(!is.na(onlyuserledgrants$Recipient.Org.Company.Number), 1, 0))
+
+orgtype <- data.frame(charity,cic,university,la,commgroupasso,school,trust,privatecompany)
+orgtype <- mutate(orgtype, sum = charity + cic + university + la + commgroupasso + school + trust + privatecompany)
+orgtype$orgtype <- colnames(orgtype[1:8])[apply(orgtype[1:8],1,which.max)]
+orgtype$orgtype <- ifelse(orgtype$sum==0, "Not classified", orgtype$orgtype)
+```
+
+I anyone missing?
+```{r}
+filter(orgtype, charity == "No" & cic == "No" & university == "No" & la == "No" & commgroupasso == "No" & school == "No" & institute == "No" & trust == "No" & privatecompany == "No")
+```
+
+```{r}
+sort(table(orgtype$orgtype), decreasing=TRUE)
+```
+
+```{r}
+onlyuserledgrants$OrgType <- orgtype$orgtype
+```
+
+Add frequency of each organization
+```{r}
+frequencyorgtype <- plyr::count(orgtype, 'orgtype')
+orgtypefreq <- dplyr::full_join(orgtype, frequencyorgtype, by.x = orgtype)
+onlyuserledgrants$OrgTypeFreq <- orgtypefreq$freq
+```
+
+```{r}
+frequencyorg <- plyr::count(onlyuserledgrants, 'Funding.Org.Name')
+onlyuserledgrants <- dplyr::full_join(onlyuserledgrants, frequencyorg, by.x = Funding.Org.Name)
+```
+
+```{r}
+colnames(onlyuserledgrants)[21] <- "OrgFreq"
+```
+
+Change to labels to display
+```{r}
+onlyuserledgrants$OrgType <- gsub("charity", "Charity", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("privatecompany", "Private company", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("school", "School", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("la", "Local authority", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("cic", "Community Interest Company", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("university", "Univerity or college", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("commgroupasso", "Community group or association", onlyuserledgrants$OrgType)
+onlyuserledgrants$OrgType <- gsub("trust", "Trust", onlyuserledgrants$OrgType)
+```
+
+```{r}
+onlyuserledgrants$OrgType <- gsub("Not cLocal authorityssified", "Not classified", onlyuserledgrants$OrgType)
+```
+
+##Amount per founder
+
+Add a column with the amount each founder has awarded
+```{r}
+library(dplyr)
+totalamount <-  onlyuserledgrants %>% group_by(FundingOrgName) %>% summarise(TotalAmountFounder = sum(AmountAwarded))
+onlyuserledgrants <- dplyr::full_join(onlyuserledgrants, totalamount, by = "FundingOrgName")
+```
+
+# Export
+
+Make sure we don't export blank rows
+```{r}
+onlyuserledgrants <- filter(onlyuserledgrants, !is.na(onlyuserledgrants$Identifier))
+```
+
+Clean column names
+```{r}
+colnames(onlyuserledgrants) <- gsub("[.]", "", colnames(onlyuserledgrants))
+```
+
+Export to a JSON file to visualise with D3.js
+```{r}
+library(jsonlite)
+userledjson <- toJSON(onlyuserledgrants)
+write(userledjson, "userledfinal.json")
+```
+
+
+# Analysis
+
+```{r}
+install.packages("summarytools")
+```
+
+```{r}
+library(summarytools)
+view(dfSummary(onlyuserledgrants))
+```
+
+Count user led-grants by year
+```{r}
+table(onlyuserledgrants$Year)
+```
+
+Count all the grants by year
+```{r}
+userledgrants$Year <- substr(userledgrants$Award.Date, 1, 4)
+userledgrants$Year <- as.numeric(userledgrants$Year)
+table(userledgrants$Year)
+```
+
+Count by theme
+```{r}
+sort(table(onlyuserledgrants$Theme), decreasing = T)
+```
+
+Percentage by theme
+```{r}
+sort(100*prop.table(table(onlyuserledgrants$Theme)), decreasing = T)
+```
+
+Total amount
+```{r}
+sum(onlyuserledgrants$AmountAwarded)
+```
+
+
+Max amount
+```{r}
+max(onlyuserledgrants$AmountAwarded)
+dplyr::slice(onlyuserledgrants, which.max(onlyuserledgrants$AmountAwarded))
+```
+
+Median amount
+```{r}
+stats::median(onlyuserledgrants$AmountAwarded)
+```
+
+Count by founder
+```{r}
+sort(table(onlyuserledgrants$FundingOrgName), decreasing = T)
+```
+
+Percentage by founder
+```{r}
+sort(prop.table(table(onlyuserledgrants$FundingOrgName))*100, decreasing = T)
+```
+
+Amount by founder
+
+```{r}
+library(dplyr)
+onlyuserledgrants %>% 
+  group_by(FundingOrgName) %>% 
+  summarise(TotalAmount = sum(AmountAwarded))
+```
+
