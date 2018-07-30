@@ -208,23 +208,29 @@ document.addEventListener("DOMContentLoaded", function(e) {
       grid = d3.select("#chart-orgtype")
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
+        .attr("class", "column-chart")
 
-      const group = grid.selectAll('.group')
+      const group = grid.selectAll('#group')
       	.data(nest)
       	.enter()
       	.append('div')
-      	.attr('class', 'group');
+        .attr("id", function(d) { if (d.key == "Charity") {
+          return d.key;
+        } else {
+          return "group";}
+        });
+      console.log(nest);
 
       group.selectAll('.block')
       	.data(d => d.values)
       	.enter()
       	.append('div')
-      	.attr('class', 'block')
         .style("width", 8 + "px")
         .style("height", 8 + "px")
         .style('background-color', function(d){
           return colour(d.Theme);
         })
+        .attr("class", "block")
         .on("mousemove", function(d) {
           d3.select(this)
             .style('opacity', 0.5);
@@ -271,6 +277,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
     });
   }(d3);
+
 
   //Chart 5: grants sorted by the funding organisation
   var chartfundingorg = function(d3) {
