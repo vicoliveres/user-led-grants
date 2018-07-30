@@ -83,7 +83,9 @@ footer {
   display: flex;
 	flex-direction: row;
 	align-items: flex-end;
+	justify-content: center;
 	min-width: 700px;
+	max-width: 850px;
 }
 
 .row-chart {
@@ -100,6 +102,26 @@ footer {
 	max-height: 600px;
 	max-width: 170px;
 	min-width: 40px;
+}
+
+#group {
+  display: flex;
+  flex-wrap: wrap-reverse;
+	flex-direction: row;
+  align-items: flex-end;
+  margin: 0 0.5rem;
+	max-height: 600px;
+	width: 60px;
+	flex-basis: auto;
+}
+
+#Charity {
+  display: flex;
+  flex-wrap: wrap-reverse;
+	flex-direction: row;
+  align-items: flex-end;
+  margin: 0 0.5rem;
+	width: 145px;
 }
 
 .group-rows {
