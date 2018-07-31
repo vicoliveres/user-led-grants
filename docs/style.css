@@ -84,6 +84,7 @@ footer {
 	flex-direction: row;
 	align-items: flex-end;
 	justify-content: center;
+	min-width: 600px;
 	max-width: 850px;
 }
 
